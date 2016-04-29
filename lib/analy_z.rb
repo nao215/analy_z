@@ -11,7 +11,7 @@ module AnalyZ
     attr_accessor :tf
     attr_accessor :idf
     attr_accessor :tf_idf
-    attr_accessor :hsm_tf_idf
+    attr_accessor :hse_tf_idf
     attr_accessor :words
     attr_accessor :texts
     attr_accessor :sentences
@@ -26,7 +26,7 @@ module AnalyZ
 
     def analyze_words sentences, type_ary = ['名詞']
 
-      @texts, @words, @tf, @idf, @hsm = {}, {}, {}, {}, {}
+      @texts, @words, @tf, @idf, @hse = {}, {}, {}, {}, {}
 
       sentences.each{|k, sentence| @texts[k] = sentence.map {|s| s[0]}.join }
 
@@ -35,11 +35,11 @@ module AnalyZ
         @words[key] = parse_by_natto(text, type_ary)
         @tf[key] = calc_tf(@words[key])
         @idf[key] = calc_idf(@texts, @words[key])
-        @hsm[key] = calc_hsm(@words[key], sentence_ary)
+        @hse[key] = calc_hse(@words[key], sentence_ary)
       end
 
       @tf_idf = calc_tf_idf(@tf, @idf)
-      @hsm_tf_idf = calc_hsm_tf_idf(@tf_idf, @hsm)
+      @hse_tf_idf = calc_hse_tf_idf(@tf_idf, @hse)
 
     end
 
@@ -111,7 +111,7 @@ module AnalyZ
       end
     end
 
-    def calc_hsm words, sentence_ary
+    def calc_hse words, sentence_ary
       sentence_ary = sentence_ary.select{|sentence| sentence[1] != 1}
       words.map do |word|
         rate = 1
@@ -138,22 +138,22 @@ module AnalyZ
 
     end
 
-    def calc_hsm_tf_idf tf_idf_list_hash, hsm
+    def calc_hse_tf_idf tf_idf_list_hash, hse
 
-      hsm_tf_idf = {}
+      hse_tf_idf = {}
 
-      hsm.each do |k, h|
-        hsm[k] = hsm[k].select {|h| h[1] != 1 }
+      hse.each do |k, h|
+        hse[k] = hse[k].select {|h| h[1] != 1 }
       end
 
       tf_idf_list_hash.each do |k, tf_idf_list|
-        hsm_tf_idf[k] = tf_idf_list.map do |tf_idf|
-          rate = hsm[k].assoc(tf_idf[0]) ? hsm[k].assoc(tf_idf[0])[1] : 1
+        hse_tf_idf[k] = tf_idf_list.map do |tf_idf|
+          rate = hse[k].assoc(tf_idf[0]) ? hse[k].assoc(tf_idf[0])[1] : 1
           [tf_idf[0], tf_idf[1] * rate]
         end
       end
 
-      hsm_tf_idf
+      hse_tf_idf
     end
 
   end
