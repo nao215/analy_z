@@ -8,7 +8,6 @@ Gem::Specification.new do |spec|
   spec.version       = AnalyZ::VERSION
   spec.authors       = ["nao215"]
   spec.email         = ["xxxxxy.naoxxxxx@gmail.com"]
-
   spec.summary       = %q{Text Analyzer}
   spec.description   = %q{calcurate tf idf and hse(html semantic element) }
   spec.homepage      = ""
@@ -18,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "natto"
   spec.add_development_dependency "bundler", "~> 1.9"
   spec.add_development_dependency "rake", "~> 10.0"
 end
