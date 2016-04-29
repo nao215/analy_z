@@ -16,9 +16,9 @@ module AnalyZ
     attr_accessor :texts
     attr_accessor :sentences
 
-    def initialize html, selector = 'body', type_ary = ['名詞']
+    def initialize html_path, selector = 'body', type_ary = ['名詞']
       @sentences = {}
-      Dir.glob("htmls/*.html").each do |f|
+      Dir.glob(html_path).each do |f|
         @sentences[f] = parse_html(Nokogiri::HTML.parse(File.read(f), nil, nil).css(selector).to_html)
       end
       analyze_words(@sentences)

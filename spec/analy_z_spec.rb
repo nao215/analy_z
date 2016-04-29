@@ -6,7 +6,7 @@ describe AnalyZ do
   end
 
   it 'does something useful' do
-    a = AnalyZ::Analyzer.new(File.read('./text.html'), '#js-fixedside-ref')
+    a = AnalyZ::Analyzer.new('htmls/*.html', '#js-fixedside-ref')
     expect(true).to eq(true)
   end
 end
