@@ -8,6 +8,7 @@ module AnalyZ
     require 'date'
     require 'natto'
     require 'nokogiri'
+    require  'fileutils'
 
     attr_accessor :tf
     attr_accessor :idf
