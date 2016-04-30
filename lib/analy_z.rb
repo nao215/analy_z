@@ -31,6 +31,7 @@ module AnalyZ
         txt << sentences.map{|s| s[0] }.join + '/=== EOS ===/'
       end
 
+      FileUtils.mkdir_p('tmp') unless FileTest.exist?('tmp')
       text_file_path = "tmp/#{DateTime.now}.txt"
       File.write(text_file_path, txt)
 
