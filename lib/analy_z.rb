@@ -5,6 +5,7 @@ module AnalyZ
   class Analyzer
 
     require 'pp'
+    require 'date'
     require 'natto'
     require 'nokogiri'
 
@@ -19,26 +20,42 @@ module AnalyZ
     def initialize html_path, selector = 'body', type_ary = ['名詞']
       @sentences = {}
       Dir.glob(html_path).each do |f|
+        print '.'
         @sentences[f] = parse_html(Nokogiri::HTML.parse(File.read(f), nil, nil).css(selector).to_html)
       end
-      analyze_words(@sentences)
+
+      puts "\n=== creating sentences file ==="
+      txt = ""
+      @sentences.each do |k, sentences|
+        print '.'
+        txt << sentences.map{|s| s[0] }.join + '/=== EOS ===/'
+      end
+
+      text_file_path = "tmp/#{DateTime.now}.txt"
+      File.write(text_file_path, txt)
+
+      puts "\n=== analyzing... ==="
+      analyze_words(@sentences, text_file_path)
     end
 
-    def analyze_words sentences, type_ary = ['名詞']
+    def analyze_words sentences, text_file_path, type_ary = ['名詞']
 
-      @texts, @words, @tf, @idf, @hse = {}, {}, {}, {}, {}
+      @words, @tf, @idf, @hse = {}, {}, {}, {}
 
-      sentences.each{|k, sentence| @texts[k] = sentence.map {|s| s[0]}.join }
-
+      puts "=== calculating tf and idf and hse ==="
       sentences.each do |key, sentence_ary|
+        print '.'
         text = sentence_ary.map {|s| s[0] }.join
         @words[key] = parse_by_natto(text, type_ary)
         @tf[key] = calc_tf(@words[key])
-        @idf[key] = calc_idf(@texts, @words[key])
+        @idf[key] = calc_idf(@words[key], text_file_path)
         @hse[key] = calc_hse(@words[key], sentence_ary)
       end
 
+      puts "\n=== calculating tf idf ==="
       @tf_idf = calc_tf_idf(@tf, @idf)
+
+      puts "=== calculating hse tf idf ==="
       @hse_tf_idf = calc_hse_tf_idf(@tf_idf, @hse)
 
     end
@@ -103,10 +120,13 @@ module AnalyZ
       end
     end
 
-    def calc_idf sentences, words
+    def calc_idf words, text_file_path
+      texts = File.read(text_file_path).split('/=== EOS ===/')
       words.map do |word|
         cnt = 0
-        sentences.each {|k, v| cnt += 1 if v.include?(word) }
+        texts.each do |text|
+          cnt += 1 if text.include?(word)
+        end
         [word, Math.log(sentences.length / cnt.to_f)]
       end
     end
