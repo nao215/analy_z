@@ -3,6 +3,19 @@
 This is gem for text analyze.
 Now you can analyze hse-tf-idf value about each words.
 
+## Dependency
+
+This gem need 'mecab'
+
+so please install 'mecab'
+
+MacOS
+
+  $ brew install mecab
+
+  $ brew install mecab-ipadic
+
+
 ## What is hse-tf-idf
 
 hse-tf-idf = hse * tf-idf
